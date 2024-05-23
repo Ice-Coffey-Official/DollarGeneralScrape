@@ -12,8 +12,6 @@ def extractLinks(url):
         newLink = link.find('a')['href']
         ending = newLink.split('/')[-1].split('.')[0]
         newLinks.append(url + '/' + ending)
-        if(i>3):
-            break
     
     return newLinks
 
@@ -28,8 +26,6 @@ def extractStoreLinks(url):
         newLink = link['href']
         ending = newLink.split('/')[-1].split('.')[0]
         newLinks.append(url + '/' + ending)
-        if(i>3):
-            break
     
     return newLinks
 

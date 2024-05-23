@@ -2,7 +2,7 @@
 Scraper for Data of the Dollar General Store
 
 ## Features
-- Scrapes Dollar Tree Data for Informational purposes from https://www.dollargeneral.com/store-directory and puts them into excel and csv files.
+- Scrapes Dollar General Data for Informational purposes from https://www.dollargeneral.com/store-directory and puts them into excel and csv files.
 
 ## Data
 There is a lot of data to process, so sample data of the output is provided.

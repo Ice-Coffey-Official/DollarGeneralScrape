@@ -1,10 +1,21 @@
 import requests
 from bs4 import BeautifulSoup
+from util.config import retryBackoff, reqSleep
+import time
 
 def extractLinks(url):
+    time.sleep(reqSleep)
     newLinks = []
     headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
-    page = requests.get(url, headers=headers)
+    try:
+        page = requests.get(url, headers=headers)
+    except:
+        try:
+            time.sleep(retryBackoff)
+            page = requests.get(url, headers=headers)
+        except:
+            return []
+
     soup = BeautifulSoup(page.text, 'lxml')
     mylinks = soup.findAll("p", { "class" : "location-list-item" })
     for i in range(len(mylinks)):
@@ -16,9 +27,17 @@ def extractLinks(url):
     return newLinks
 
 def extractStoreLinks(url):
+    time.sleep(reqSleep)
     newLinks = []
     headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
-    page = requests.get(url, headers=headers)
+    try:
+        page = requests.get(url, headers=headers)
+    except:
+        try:
+            time.sleep(retryBackoff)
+            page = requests.get(url, headers=headers)
+        except:
+            return []
     soup = BeautifulSoup(page.text, 'lxml')
     mylinks = soup.findAll("a", { "class" : "view-details" })
     for i in range(len(mylinks)):
@@ -30,16 +49,43 @@ def extractStoreLinks(url):
     return newLinks
 
 def extractStoreInfo(url):
+    time.sleep(reqSleep)
     headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
-    page = requests.get(url, headers=headers)
+    try:
+        page = requests.get(url, headers=headers)
+    except:
+        try:
+            time.sleep(retryBackoff)
+            page = requests.get(url, headers=headers)
+        except:
+            return []
     soup = BeautifulSoup(page.text, 'lxml')
     storeNum = url.split('/')[-1]
     city = url.split('/')[-2]
     state = url.split('/')[-3]
-    name = soup.find("title").text.strip()
-    phoneNumber = soup.findAll("div", { "class" : "store-details__main-phone" })[-1]['data-phone'].strip('\\')
-    address = soup.find("meta", { "name" : "description" })['content'].split('| ')[-1]
-    latitude = soup.findAll("div", { "class" : "store-details__main-travel" })[-1]['data-latitude']
-    longitude = soup.findAll("div", { "class" : "store-details__main-travel" })[-1]['data-longitude']
-    
+    try:
+        name = soup.find("title").text.strip()
+    except:
+        name = ''
+
+    try:
+        phoneNumber = soup.findAll("div", { "class" : "store-details__main-phone" })[-1]['data-phone'].strip('\\')
+    except:
+        phoneNumber = ''
+
+    try:
+        address = soup.find("meta", { "name" : "description" })['content'].split('| ')[-1]
+    except:
+        address = ''
+
+    try:
+        latitude = soup.findAll("div", { "class" : "store-details__main-travel" })[-1]['data-latitude']
+    except:
+        latitude = ''
+
+    try:
+        longitude = soup.findAll("div", { "class" : "store-details__main-travel" })[-1]['data-longitude']
+    except:
+        longitude = ''
+
     return [name, storeNum, phoneNumber, address, url, longitude, latitude, city, state]
